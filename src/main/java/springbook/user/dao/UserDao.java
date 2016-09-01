@@ -1,19 +1,16 @@
 package springbook.user.dao;
 
-import org.springframework.dao.DataAccessException;
-import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementCreator;
-import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
-import springbook.user.domain.User;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
 
 import javax.sql.DataSource;
 
-import java.sql.*;
-import java.util.List;
+import springbook.user.domain.User;
 
 /**
  * Created by tae.kim on 2016. 8. 29..
@@ -39,7 +36,7 @@ public class UserDao {
     this.jdbcTemplate.setDataSource(dataSource);
   }
 
-  public void add(final User user) throws ClassNotFoundException, SQLException {
+  public void add(final User user) throws DuplicateKeyException {
     this.jdbcTemplate.update("insert into users(id, name, password) values(?,?,?)",
         user.getId(), user.getName(), user.getPassword());
   }
@@ -49,7 +46,7 @@ public class UserDao {
         this.userMapper);
   }
 
-  public void deleteAll() throws SQLException {
+  public void deleteAll() {
     this.jdbcTemplate.update("delete from users");
   }
 
