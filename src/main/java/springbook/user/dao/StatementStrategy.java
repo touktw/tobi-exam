@@ -8,5 +8,5 @@ import java.sql.SQLException;
  * Created by tae.kim on 2016. 8. 29..
  */
 public interface StatementStrategy {
-    PreparedStatement makePrepareStatement(Connection c) throws SQLException;
+  PreparedStatement makePrepareStatement(Connection c) throws SQLException;
 }
