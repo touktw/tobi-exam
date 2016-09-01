@@ -1,21 +1,23 @@
 package springbook.user.dao;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import springbook.user.domain.User;
-
 import java.sql.SQLException;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import springbook.user.domain.User;
 
 /**
  * Created by tae.kim on 2016. 8. 29..
@@ -28,7 +30,7 @@ public class UserDaoTest {
 //    private ApplicationContext context;
 
   @Autowired
-  private UserDao dao;
+  private UserDaoJdbc dao;
   private User user1;
   private User user2;
   private User user3;
@@ -36,8 +38,8 @@ public class UserDaoTest {
   @Before
   public void setUp() {
 //        ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
-//        dao = context.getBean("userDao", UserDao.class);
-//        this.dao = this.context.getBean("userDao", UserDao.class);
+//        dao = context.getBean("userDao", UserDaoJdbc.class);
+//        this.dao = this.context.getBean("userDao", UserDaoJdbc.class);
     user1 = new User("test1", "tester1", "123");
     user2 = new User("test2", "tester2", "456");
     user3 = new User("test03", "tester3", "789");
@@ -114,5 +116,13 @@ public class UserDaoTest {
     assertThat(user1.getId(), is(user2.getId()));
     assertThat(user1.getName(), is(user2.getName()));
     assertThat(user1.getPassword(), is(user2.getPassword()));
+  }
+
+  @Test(expected = DuplicateKeyException.class)
+  public void duplicateKey() {
+    dao.deleteAll();
+
+    dao.add(user1);
+    dao.add(user1);
   }
 }
