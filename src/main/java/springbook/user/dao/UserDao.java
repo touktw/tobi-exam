@@ -1,8 +1,10 @@
 package springbook.user.dao;
 
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import springbook.user.domain.User;
@@ -64,42 +66,23 @@ public class UserDao {
     this.jdbcTemplate.update("delete from users");
   }
 
-
-  public int getCount() throws SQLException, ClassNotFoundException {
-    Connection c = null;
-    PreparedStatement ps = null;
-    ResultSet rs = null;
-    try {
-      c = dataSource.getConnection();
-      ps = c.prepareStatement("select count(*) from users");
-      rs = ps.executeQuery();
-
-      rs.next();
-      return rs.getInt(1);
-    } catch (SQLException e) {
-      throw e;
-    } finally {
-      if (rs != null) {
-        try {
-          rs.close();
-        } catch (SQLException e) {
-
-        }
-      }
-      if (ps != null) {
-        try {
-          ps.close();
-        } catch (SQLException e) {
-
-        }
-      }
-      if (c != null) {
-        try {
-          c.close();
-        } catch (SQLException e) {
-
-        }
-      }
-    }
+  // queryForInt deprecated...
+  public int getCount() {
+    return this.jdbcTemplate.queryForObject("select count(*) from users", Integer.class);
   }
+
+//  public int getCount() {
+//    return this.jdbcTemplate.query(new PreparedStatementCreator() {
+//      @Override
+//      public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
+//        return con.prepareStatement("select count(*) from users");
+//      }
+//    }, new ResultSetExtractor<Integer>() {
+//      @Override
+//      public Integer extractData(ResultSet rs) throws SQLException, DataAccessException {
+//        rs.next();
+//        return rs.getInt(1);
+//      }
+//    });
+//  }
 }
